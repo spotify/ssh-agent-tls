@@ -1,0 +1,49 @@
+/*-
+ * -\-\-
+ * client-tls
+ * --
+ * Copyright (C) 2016 Spotify AB
+ * --
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * -/-/-
+ */
+
+package com.spotify.clienttlstools.tls;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+
+class Utils {
+
+  private Utils() {
+    // Prevent instantiation
+  }
+
+  static String asPemString(final Object obj) throws IOException {
+    final StringWriter sw = new StringWriter();
+
+    try (final JcaPEMWriter pw = new JcaPEMWriter(sw)) {
+      pw.writeObject(obj);
+    }
+
+    return sw.toString();
+  }
+}
