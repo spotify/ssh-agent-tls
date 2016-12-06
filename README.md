@@ -1,4 +1,4 @@
-# client-tls-tools
+# client-tls-tools [![CircleCI](https://circleci.com/gh/spotify/client-tls-tools.svg?style=svg&circle-token=89c903359be012a0295ce44da66278125976f688)](https://circleci.com/gh/spotify/client-tls-tools)
 
 
 ## Getting started
