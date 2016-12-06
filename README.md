@@ -1,7 +1,7 @@
 # client-tls-tools
 
 
-### Example
+## Getting started
 
 ```java
 final String user = "user";
@@ -12,3 +12,7 @@ final URL url = new URL("https://example.net");
 final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 certFileHttpsHandler.handle(conn);
 ```
+
+## How to build
+
+`mvn verify`
