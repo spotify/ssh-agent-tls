@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/spotify/client-tls-tools.svg?branch=master)](https://travis-ci.org/spotify/client-tls-tools)
 [![codecov](https://codecov.io/gh/spotify/client-tls-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/spotify/client-tls-tools)
 [![Maven Central](https://img.shields.io/maven-central/v/com.spotify/client-tls-tools.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.spotify%22%20client-tls-tools*)
-[![License](https://img.shields.io/github/license/spotify/apollo.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/spotify/client-tls-tools.svg)](LICENSE)
 
 This Java library provides tools for client-side TLS operations.
 This project is currently in alpha phase.
