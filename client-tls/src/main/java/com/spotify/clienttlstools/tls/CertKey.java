@@ -1,6 +1,6 @@
 /*-
  * -\-\-
- * x509-ssh-client
+ * client-tls
  * --
  * Copyright (C) 2016 Spotify AB
  * --
@@ -74,7 +74,7 @@ public abstract class CertKey {
     } else if (parsedPem instanceof PrivateKeyInfo) {
       keyInfo = (PrivateKeyInfo) parsedPem;
     } else {
-      throw new UnsupportedOperationException("Unable to parse x509 cert.");
+      throw new UnsupportedOperationException("Unable to parse X.509 certificate.");
     }
 
     final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyInfo.getEncoded());

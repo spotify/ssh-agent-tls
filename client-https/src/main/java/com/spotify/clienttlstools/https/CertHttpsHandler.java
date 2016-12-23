@@ -1,6 +1,6 @@
 /*-
  * -\-\-
- * x509-ssh-client
+ * client-https
  * --
  * Copyright (C) 2016 Spotify AB
  * --
@@ -63,7 +63,7 @@ abstract class CertHttpsHandler implements HttpsHandler {
    * {@link #handle(HttpsURLConnection)}.
    *
    * <p>The method signature is defined as throwing GeneralSecurityException because there are a
-   * handful of GeneralSecurityException subclasses that can be thrown in loading a x509
+   * handful of GeneralSecurityException subclasses that can be thrown in loading an X.509
    * Certificate and we handle all of them identically.
    */
   protected abstract CertKey createCertKey()

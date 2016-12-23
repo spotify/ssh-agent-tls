@@ -1,6 +1,6 @@
 /*-
  * -\-\-
- * x509-ssh-client
+ * client-https
  * --
  * Copyright (C) 2016 Spotify AB
  * --
