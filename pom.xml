@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>client-tls-tools</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>client-tls-tools</name>
   <description>Java tools for client-side TLS operations.</description>
@@ -31,7 +31,7 @@
     <connection>scm:git:https://github.com/spotify/client-tls-tools</connection>
     <developerConnection>scm:git:git@github.com:spotify/client-tls-tools</developerConnection>
     <url>https://github.com/spotify/client-tls-tools</url>
-    <tag>v0.0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
@@ -47,12 +47,12 @@
       <dependency>
         <groupId>com.spotify</groupId>
         <artifactId>client-tls</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.spotify</groupId>
         <artifactId>client-https</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
