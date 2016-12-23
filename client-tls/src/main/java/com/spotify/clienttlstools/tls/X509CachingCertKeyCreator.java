@@ -66,10 +66,10 @@ public class X509CachingCertKeyCreator implements CertKeyCreator {
     this.username = username;
   }
 
-  static X509CachingCertKeyCreator create(final X509CertKeyCreator delegate,
-                                          final Path cacheDirectory,
-                                          final Identity identity,
-                                          final String username) {
+  public static X509CachingCertKeyCreator create(final X509CertKeyCreator delegate,
+                                                 final Path cacheDirectory,
+                                                 final Identity identity,
+                                                 final String username) {
     return new X509CachingCertKeyCreator(delegate, cacheDirectory, identity, username);
   }
 

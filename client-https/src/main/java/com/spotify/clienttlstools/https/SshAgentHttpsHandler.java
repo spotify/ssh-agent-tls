@@ -24,23 +24,33 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.spotify.clienttlstools.tls.CertKey;
 import com.spotify.clienttlstools.tls.SshAgentContentSigner;
+import com.spotify.clienttlstools.tls.X509CachingCertKeyCreator;
 import com.spotify.clienttlstools.tls.X509CertKeyCreator;
 import com.spotify.sshagentproxy.AgentProxy;
 import com.spotify.sshagentproxy.Identity;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.bouncycastle.operator.ContentSigner;
 
 public class SshAgentHttpsHandler extends CertHttpsHandler {
 
-  private final AgentProxy agentProxy;
+  private static final Path CERT_CACHE_DIR = Paths.get(
+      System.getProperty("user.home"), ".client-tls-tools", "cert_cache");
+
   private final Identity identity;
+  private final X509CachingCertKeyCreator x509CachingCertKeyCreator;
 
   private SshAgentHttpsHandler(final String user,
                                final boolean failOnCertError,
                                final AgentProxy agentProxy,
                                final Identity identity) {
     super(user, failOnCertError);
-    this.agentProxy = checkNotNull(agentProxy, "agentProxy");
+    checkNotNull(agentProxy, "agentProxy");
     this.identity = checkNotNull(identity, "identity");
+    final ContentSigner contentSigner = SshAgentContentSigner.create(agentProxy, identity);
+    final X509CertKeyCreator delegate = X509CertKeyCreator.create(getUser(), contentSigner);
+    x509CachingCertKeyCreator = X509CachingCertKeyCreator.create(
+        delegate, CERT_CACHE_DIR, identity, getUser());
   }
 
   static SshAgentHttpsHandler create(final String user,
@@ -52,8 +62,7 @@ public class SshAgentHttpsHandler extends CertHttpsHandler {
 
   @Override
   protected CertKey createCertKey() {
-    final ContentSigner contentSigner = SshAgentContentSigner.create(agentProxy, identity);
-    return X509CertKeyCreator.create(getUser(), contentSigner).createCertKey();
+    return x509CachingCertKeyCreator.createCertKey();
   }
 
   @Override
