@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <name>client-tls-tools</name>
   <description>Java tools for client-side TLS operations.</description>
-  <url>https://github.com/spotify/x509-ssh-client</url>
+  <url>https://github.com/spotify/client-tls-tools</url>
 
   <modules>
     <module>client-https</module>
@@ -30,9 +30,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:https://github.com/spotify/x509-ssh-client</connection>
-    <developerConnection>scm:git:git@github.com:spotify/x509-ssh-client</developerConnection>
-    <url>https://github.com/spotify/x509-ssh-client</url>
+    <connection>scm:git:https://github.com/spotify/client-tls-tools</connection>
+    <developerConnection>scm:git:git@github.com:spotify/client-tls-tools</developerConnection>
+    <url>https://github.com/spotify/client-tls-tools</url>
     <tag>HEAD</tag>
   </scm>
 
