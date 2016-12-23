@@ -13,7 +13,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>client-tls-tools</name>
-  <description>Generates x509 certs from SSH keys</description>
+  <description>Java tools for client-side TLS operations.</description>
   <url>https://github.com/spotify/x509-ssh-client</url>
 
   <modules>
@@ -49,12 +49,12 @@
       <dependency>
         <groupId>com.spotify</groupId>
         <artifactId>client-tls</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.spotify</groupId>
         <artifactId>client-https</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -129,15 +129,6 @@
           <source>1.7</source>
           <target>1.7</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
