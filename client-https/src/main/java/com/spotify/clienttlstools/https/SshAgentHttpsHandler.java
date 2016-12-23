@@ -51,7 +51,7 @@ public class SshAgentHttpsHandler extends CertHttpsHandler {
   }
 
   @Override
-  protected CertKey creatCertKey() {
+  protected CertKey createCertKey() {
     final ContentSigner contentSigner = SshAgentContentSigner.create(agentProxy, identity);
     return X509CertKeyCreator.create(getUser(), contentSigner).createCertKey();
   }

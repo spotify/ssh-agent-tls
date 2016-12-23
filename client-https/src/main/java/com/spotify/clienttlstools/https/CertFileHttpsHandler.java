@@ -46,9 +46,8 @@ public class CertFileHttpsHandler extends CertHttpsHandler {
   }
 
   @Override
-  protected CertKey creatCertKey() throws IOException, GeneralSecurityException {
-    return CertKey.fromPaths(certKeyPaths.certPath(),
-        certKeyPaths.keyPath());
+  protected CertKey createCertKey() throws IOException, GeneralSecurityException {
+    return CertKey.fromPaths(certKeyPaths.certPath(), certKeyPaths.keyPath());
   }
 
   @Override

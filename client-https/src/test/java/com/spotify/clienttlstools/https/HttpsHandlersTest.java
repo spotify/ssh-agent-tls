@@ -30,15 +30,10 @@ import com.spotify.clienttlstools.tls.CertKey;
 import com.spotify.clienttlstools.tls.CertKeyPaths;
 import com.spotify.sshagentproxy.AgentProxy;
 import com.spotify.sshagentproxy.Identity;
-import java.io.EOFException;
-import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import javax.net.ssl.HttpsURLConnection;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -55,7 +50,7 @@ public class HttpsHandlersTest {
     final CertFileHttpsHandler h =
         HttpsHandlers.createCertFileHttpsHandler("foo", true, certKeyPaths);
 
-    final CertKey pair = h.creatCertKey();
+    final CertKey pair = h.createCertKey();
     assertNotNull(pair);
     assertNotNull(pair.cert());
     assertNotNull(pair.key());
@@ -87,19 +82,9 @@ public class HttpsHandlersTest {
     final SshAgentHttpsHandler h = HttpsHandlers.createSshAgentHttpsHandler(
         "foo", true, proxy, identity);
 
-    final CertKey pair = h.creatCertKey();
+    final CertKey pair = h.createCertKey();
     assertNotNull(pair);
     assertNotNull(pair.cert());
     assertNotNull(pair.key());
-  }
-
-  void test() throws Exception {
-    final String user = "user";
-    final CertKeyPaths certKeyPaths = CertKeyPaths.create(Paths.get("/foo"), Paths.get("/bar"));
-    final CertFileHttpsHandler certFileHttpsHandler =
-        HttpsHandlers.createCertFileHttpsHandler(user, false, certKeyPaths);
-    final URL url = new URL("https://example.net");
-    final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-    certFileHttpsHandler.handle(conn);
   }
 }

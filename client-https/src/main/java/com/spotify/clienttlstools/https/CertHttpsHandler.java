@@ -66,7 +66,7 @@ abstract class CertHttpsHandler implements HttpsHandler {
    * handful of GeneralSecurityException subclasses that can be thrown in loading a x509
    * Certificate and we handle all of them identically.
    */
-  protected abstract CertKey creatCertKey()
+  protected abstract CertKey createCertKey()
       throws IOException, GeneralSecurityException;
 
   /**
@@ -78,7 +78,7 @@ abstract class CertHttpsHandler implements HttpsHandler {
   public void handle(final HttpsURLConnection conn) {
     final CertKey certKey;
     try {
-      certKey = creatCertKey();
+      certKey = createCertKey();
     } catch (IOException | GeneralSecurityException e) {
       if (failOnCertError) {
         throw new RuntimeException(e);
