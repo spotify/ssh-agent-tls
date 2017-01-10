@@ -30,9 +30,11 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import org.apache.http.ssl.SSLContexts;
@@ -42,7 +44,6 @@ import org.slf4j.LoggerFactory;
 abstract class CertHttpsHandler implements HttpsHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(CertHttpsHandler.class);
-  private static final char[] KEY_STORE_PASSWORD = "FPLSlZQuM3ZCM3SjINSKuWyPK2HeS4".toCharArray();
 
   private final String user;
   private final boolean failOnCertError;
@@ -95,6 +96,18 @@ abstract class CertHttpsHandler implements HttpsHandler {
     final Certificate cert = certKey.cert();
     final PrivateKey key = certKey.key();
 
+    // Generate a keystore password.
+    // Do all this locally to not make copies of the password in memory.
+    final SecureRandom random = new SecureRandom();
+    final byte[] bytes = new byte[60];
+    final char[] keyStorePassword = new char[60];
+    random.nextBytes(bytes);
+    for (int i = 0; i < bytes.length; i++) {
+      keyStorePassword[i] = (char) (bytes[i] & 0xff);
+    }
+    // Clear out the array that had password. Do it immediately! Rohan said so.
+    Arrays.fill(bytes, (byte) 0);
+
     try {
       // We're creating a keystore in memory and putting the cert & key into it.
       // The keystore needs a password when we put the key into it, even though it's only going to
@@ -103,13 +116,17 @@ abstract class CertHttpsHandler implements HttpsHandler {
       final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
       keyStore.load(null, null);
       keyStore.setCertificateEntry("client", cert);
-      keyStore.setKeyEntry("key", key, KEY_STORE_PASSWORD, new Certificate[]{cert});
+      keyStore.setKeyEntry("key", key, keyStorePassword, new Certificate[]{cert});
 
       // build an SSLContext based on our keystore, and then get an SSLSocketFactory fromPaths that
       final SSLContext sslContext = SSLContexts.custom()
           .useProtocol("TLS")
-          .loadKeyMaterial(keyStore, KEY_STORE_PASSWORD)
+          .loadKeyMaterial(keyStore, keyStorePassword)
           .build();
+
+      // Clear out arrays that had password
+      Arrays.fill(keyStorePassword, '\0');
+
       conn.setSSLSocketFactory(sslContext.getSocketFactory());
     } catch (CertificateException
         | IOException
