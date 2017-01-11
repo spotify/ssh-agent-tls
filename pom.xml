@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>ssh-agent-tls</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>ssh-agent-tls</name>
   <description>
     A library that generates X.509 certificates and signs them with SSH agent.
