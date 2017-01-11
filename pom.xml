@@ -33,6 +33,21 @@
 
   <developers>
     <developer>
+      <id>rohan</id>
+      <name>Rohan Singh</name>
+      <email>rohan@spotify.com</email>
+    </developer>
+    <developer>
+      <id>mattbrown</id>
+      <name>Matt Brown</name>
+      <email>mattbrown@spotify.com</email>
+    </developer>
+    <developer>
+      <id>staffan</id>
+      <name>Staffan Gimåker</name>
+      <email>staffan@spotify.com</email>
+    </developer>
+    <developer>
       <id>dxia</id>
       <name>David Xia</name>
       <email>dxia@spotify.com</email>
