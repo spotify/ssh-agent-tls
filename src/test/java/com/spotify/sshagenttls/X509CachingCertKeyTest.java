@@ -36,6 +36,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,6 +52,8 @@ public class X509CachingCertKeyTest {
   public TemporaryFolder cacheFolder = new TemporaryFolder();
 
   private static final String USERNAME = "rohan";
+  private static final X500Principal X_500_PRINCIPAL =
+      new X500Principal("C=US,O=Spotify,CN=sshagenttls");
 
   private static final String ROHAN_PUB_KEY =
       "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo6Uv9Ed/6g8IEdjponMNZ/s/IC/Lebo4wgUTegF7fvByb2Jk"
@@ -84,18 +88,18 @@ public class X509CachingCertKeyTest {
     });
 
     final X509CertKeyCreator delegate = X509CertKeyCreator.create(
-        USERNAME, SshAgentContentSigner.create(agentProxy, identity), 500, 5000);
+        SshAgentContentSigner.create(agentProxy, identity), 500, 5000);
     sut = X509CachingCertKeyCreator.create(
-        delegate, cacheFolder.getRoot().toPath(), identity, USERNAME);
+        delegate, cacheFolder.getRoot().toPath(), identity);
   }
 
   @Test
   public void testCreateCertKey() throws Exception {
-    final CertKey original = sut.createCertKey();
+    final CertKey original = sut.createCertKey(USERNAME, X_500_PRINCIPAL);
 
     // repeated invocations should return the exact same cert & keypair
     for (int i = 0; i < 5; i++) {
-      final CertKey shouldBeFromCache = sut.createCertKey();
+      final CertKey shouldBeFromCache = sut.createCertKey(USERNAME, X_500_PRINCIPAL);
 
       assertThat("cert does not match original",
           original.cert().getEncoded(),
@@ -109,7 +113,7 @@ public class X509CachingCertKeyTest {
     // sleep for long enough that the cert expires
     Thread.sleep(5000);
 
-    final CertKey shouldBeNew = sut.createCertKey();
+    final CertKey shouldBeNew = sut.createCertKey(USERNAME, X_500_PRINCIPAL);
     assertThat("cached cert being used past expiry",
         shouldBeNew.cert().getEncoded(),
         not(equalTo(original.cert().getEncoded())));
@@ -120,16 +124,15 @@ public class X509CachingCertKeyTest {
 
   @Test
   public void testCacheWithNewUsername() throws Exception {
-    final CertKey original = sut.createCertKey();
+    final CertKey original = sut.createCertKey(USERNAME, X_500_PRINCIPAL);
 
-    final String newUsername = USERNAME + "2";
     final X509CertKeyCreator delegate = X509CertKeyCreator.create(
-        newUsername, SshAgentContentSigner.create(agentProxy, identity), 500, 5000);
+        SshAgentContentSigner.create(agentProxy, identity), 500, 5000);
     final X509CachingCertKeyCreator sut2 = X509CachingCertKeyCreator.create(
-        delegate, cacheFolder.getRoot().toPath(), identity, newUsername);
+        delegate, cacheFolder.getRoot().toPath(), identity);
 
     // invocation with a different username should return different cert & keypair
-    final CertKey shouldBeNew = sut2.createCertKey();
+    final CertKey shouldBeNew = sut2.createCertKey(USERNAME + "2", X_500_PRINCIPAL);
     assertThat("cached cert being used with new username",
         shouldBeNew.cert().getEncoded(),
         not(equalTo(original.cert().getEncoded())));

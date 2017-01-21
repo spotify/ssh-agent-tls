@@ -29,18 +29,16 @@ public class CertFileHttpsHandler extends CertHttpsHandler {
 
   private final CertKeyPaths certKeyPaths;
 
-  private CertFileHttpsHandler(final String user,
-                               final boolean failOnCertError,
+  private CertFileHttpsHandler(final boolean failOnCertError,
                                final CertKeyPaths certKeyPaths) {
-    super(user, failOnCertError);
+    super(failOnCertError);
     this.certKeyPaths = checkNotNull(certKeyPaths);
   }
 
-  static CertFileHttpsHandler create(
-      final String user,
+  public static CertFileHttpsHandler create(
       final boolean failOnError,
       final CertKeyPaths certKeyPaths) {
-    return new CertFileHttpsHandler(user, failOnError, certKeyPaths);
+    return new CertFileHttpsHandler(failOnError, certKeyPaths);
   }
 
   @Override

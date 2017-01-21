@@ -26,6 +26,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.spotify.sshagentproxy.Identity;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -41,6 +42,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,27 +57,23 @@ public class X509CachingCertKeyCreator implements CertKeyCreator {
   private final Path cacheDirectory;
   // TODO (dxia) It'd be nice if this class didn't need to know about ssh-agent stuff
   private final Identity identity;
-  private final String username;
 
   private X509CachingCertKeyCreator(final X509CertKeyCreator delegate,
                                     final Path cacheDirectory,
-                                    final Identity identity,
-                                    final String username) {
+                                    final Identity identity) {
     this.delegate = delegate;
     this.cacheDirectory = cacheDirectory;
     this.identity = identity;
-    this.username = username;
   }
 
   public static X509CachingCertKeyCreator create(final X509CertKeyCreator delegate,
                                                  final Path cacheDirectory,
-                                                 final Identity identity,
-                                                 final String username) {
-    return new X509CachingCertKeyCreator(delegate, cacheDirectory, identity, username);
+                                                 final Identity identity) {
+    return new X509CachingCertKeyCreator(delegate, cacheDirectory, identity);
   }
 
   @Override
-  public CertKey createCertKey() {
+  public CertKey createCertKey(final String username, final X500Principal x500Principal) {
     final MessageDigest identityHash;
     try {
       identityHash = MessageDigest.getInstance("SHA-1");
@@ -83,6 +83,7 @@ public class X509CachingCertKeyCreator implements CertKeyCreator {
 
     identityHash.update(identity.getKeyBlob());
     identityHash.update(username.getBytes());
+    identityHash.update(x500Principal.getEncoded());
 
     final String identityHex = HEX_ENCODING.encode(identityHash.digest()).substring(0, 8);
     final Path cacheCertPath = cacheDirectory.resolve(identityHex + ".crt");
@@ -114,7 +115,7 @@ public class X509CachingCertKeyCreator implements CertKeyCreator {
       LOG.debug("using existing cert for {} fromPaths {}", username, cacheCertPath);
       return cached;
     } else {
-      final CertKey generated = delegate.createCertKey();
+      final CertKey generated = delegate.createCertKey(username, x500Principal);
       saveToCache(cacheDirectory, cacheCertPath, cacheKeyPath, generated);
 
       return generated;
@@ -143,8 +144,7 @@ public class X509CachingCertKeyCreator implements CertKeyCreator {
         sbc.write(ByteBuffer.wrap(certPem.getBytes()));
       }
 
-      try (final SeekableByteChannel sbc =
-               Files.newByteChannel(cacheKeyPath, options, attrs)) {
+      try (final SeekableByteChannel sbc = Files.newByteChannel(cacheKeyPath, options, attrs)) {
         sbc.write(ByteBuffer.wrap(keyPem.getBytes()));
       }
 

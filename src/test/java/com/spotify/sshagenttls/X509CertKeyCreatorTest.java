@@ -37,6 +37,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.security.spec.X509EncodedKeySpec;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Before;
@@ -73,8 +76,7 @@ public class X509CertKeyCreatorTest {
 
     when(identity.getPublicKey()).thenReturn(publicKey);
     when(identity.getKeyBlob()).thenReturn(publicKey.getEncoded());
-    when(agentProxy.sign(
-        any(Identity.class), any(byte[].class))).thenAnswer(new Answer<byte[]>() {
+    when(agentProxy.sign(any(Identity.class), any(byte[].class))).thenAnswer(new Answer<byte[]>() {
       @Override
       public byte[] answer(InvocationOnMock invocation) throws Throwable {
         final byte[] bytesToSign = (byte[]) invocation.getArguments()[1];
@@ -87,12 +89,13 @@ public class X509CertKeyCreatorTest {
     });
 
     final ContentSigner contentSigner = SshAgentContentSigner.create(agentProxy, identity);
-    sut = X509CertKeyCreator.create(USERNAME, contentSigner);
+    sut = X509CertKeyCreator.create(contentSigner);
   }
 
   @Test
   public void testCreateCertKey() throws Exception {
-    final CertKey certKey = sut.createCertKey();
+    final CertKey certKey = sut.createCertKey(
+        USERNAME, new X500Principal("C=US,O=Spotify,CN=sshagenttls"));
 
     assertNotNull(certKey.cert());
     assertNotNull(certKey.key());

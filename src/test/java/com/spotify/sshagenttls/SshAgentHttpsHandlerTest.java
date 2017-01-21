@@ -20,7 +20,6 @@
 
 package com.spotify.sshagenttls;
 
-import static com.google.common.io.Resources.getResource;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -28,31 +27,23 @@ import static org.mockito.Mockito.when;
 
 import com.spotify.sshagentproxy.AgentProxy;
 import com.spotify.sshagentproxy.Identity;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-public class HttpsHandlersTest {
+public class SshAgentHttpsHandlerTest {
 
-  @Test
-  public void testCertificateFile() throws Exception {
-    final CertKeyPaths certKeyPaths = CertKeyPaths.create(
-        Paths.get(getResource("UIDCACert.pem").getPath()),
-        Paths.get(getResource("UIDCACert.key").getPath())
-    );
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
 
-    final CertFileHttpsHandler h =
-        HttpsHandlers.createCertFileHttpsHandler("foo", true, certKeyPaths);
-
-    final CertKey pair = h.createCertKey();
-    assertNotNull(pair);
-    assertNotNull(pair.cert());
-    assertNotNull(pair.key());
-  }
 
   @Test
   public void testSshAgent() throws Exception {
@@ -77,8 +68,14 @@ public class HttpsHandlersTest {
       }
     });
 
-    final SshAgentHttpsHandler h = HttpsHandlers.createSshAgentHttpsHandler(
-        "foo", true, proxy, identity);
+    final SshAgentHttpsHandler h = SshAgentHttpsHandler.builder()
+        .setUser("foo")
+        .setFailOnCertError(true)
+        .setAgentProxy(proxy)
+        .setIdentity(identity)
+        .setX500Principal(new X500Principal("C=US,O=Spotify,CN=foobar"))
+        .setCertCacheDir(folder.newFolder().toPath())
+        .build();
 
     final CertKey pair = h.createCertKey();
     assertNotNull(pair);
