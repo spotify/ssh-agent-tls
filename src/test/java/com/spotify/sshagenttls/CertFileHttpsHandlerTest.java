@@ -20,12 +20,27 @@
 
 package com.spotify.sshagenttls;
 
-import javax.security.auth.x500.X500Principal;
+import static com.google.common.io.Resources.getResource;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * Creates a {@link CertKey}.
- */
-public interface CertKeyCreator {
+import java.nio.file.Paths;
+import org.junit.Test;
 
-  CertKey createCertKey(String username, X500Principal x500Principal);
+
+public class CertFileHttpsHandlerTest {
+  @Test
+  public void testCertificateFile() throws Exception {
+    final CertKeyPaths certKeyPaths = CertKeyPaths.create(
+        Paths.get(getResource("UIDCACert.pem").getPath()),
+        Paths.get(getResource("UIDCACert.key").getPath())
+    );
+
+    final CertFileHttpsHandler h = CertFileHttpsHandler.create(true, certKeyPaths);
+
+    final CertKey pair = h.createCertKey();
+    assertNotNull(pair);
+    assertNotNull(pair.cert());
+    assertNotNull(pair.key());
+  }
+
 }

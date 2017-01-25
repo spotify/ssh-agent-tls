@@ -25,6 +25,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import com.eaio.uuid.UUID;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.BaseEncoding;
+
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -35,6 +36,9 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -67,40 +71,35 @@ public class X509CertKeyCreator implements CertKeyCreator {
   private static final int KEY_SIZE = 2048;
 
   private final ContentSigner contentSigner;
-  private final String username;
   private final int validBeforeMillis;
   private final int validAfterMillis;
 
-  private X509CertKeyCreator(final String username,
-                             final ContentSigner contentSigner,
+  private X509CertKeyCreator(final ContentSigner contentSigner,
                              final int validBeforeMillis,
                              final int validAfterMillis) {
-    this.username = username;
     this.validBeforeMillis = validBeforeMillis;
     this.validAfterMillis = validAfterMillis;
     this.contentSigner = contentSigner;
   }
 
-  public static X509CertKeyCreator create(final String username,
-                                          final ContentSigner contentSigner) {
-    return X509CertKeyCreator.create(username, contentSigner,
+  public static X509CertKeyCreator create(final ContentSigner contentSigner) {
+    return X509CertKeyCreator.create(contentSigner,
         (int) HOURS.toMillis(1), (int) HOURS.toMillis(48));
   }
 
   @VisibleForTesting
-  static X509CertKeyCreator create(final String username,
-                                   final ContentSigner contentSigner,
+  static X509CertKeyCreator create(final ContentSigner contentSigner,
                                    final int validBeforeMillis,
                                    final int validAfterMills) {
-    return new X509CertKeyCreator(username, contentSigner, validBeforeMillis, validAfterMills);
+    return new X509CertKeyCreator(contentSigner, validBeforeMillis, validAfterMills);
   }
 
 
   @Override
-  public CertKey createCertKey() {
+  public CertKey createCertKey(final String username, final X500Principal x500Principal) {
     final UUID uuid = new UUID();
     final Calendar calendar = Calendar.getInstance();
-    final X500Name issuerDn = new X500Name("C=US,O=Spotify,CN=sshagenttls");
+    final X500Name issuerDn = new X500Name(x500Principal.getName(X500Principal.RFC1779));
     final X500Name subjectDn = new X500NameBuilder().addRDN(BCStyle.UID, username).build();
 
     calendar.add(Calendar.MILLISECOND, -validBeforeMillis);
@@ -126,7 +125,7 @@ public class X509CertKeyCreator implements CertKeyCreator {
 
       final SubjectKeyIdentifier keyId = utils.createSubjectKeyIdentifier(subjectPublicKeyInfo);
       final String keyIdHex = KEY_ID_ENCODING.encode(keyId.getKeyIdentifier());
-      LOG.info("generating an X509 certificate for {} with key ID={}", username, keyIdHex);
+      LOG.info("generating an X.509 certificate for {} with key ID={}", username, keyIdHex);
 
       builder.addExtension(Extension.subjectKeyIdentifier, false, keyId);
       builder.addExtension(Extension.authorityKeyIdentifier, false,

@@ -20,9 +20,6 @@
 
 package com.spotify.sshagenttls;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
-import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
@@ -45,17 +42,10 @@ abstract class CertHttpsHandler implements HttpsHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(CertHttpsHandler.class);
 
-  private final String user;
   private final boolean failOnCertError;
 
-  CertHttpsHandler(final String user, final boolean failOnCertError) {
-    Preconditions.checkArgument(!isNullOrEmpty(user));
-    this.user = user;
+  CertHttpsHandler(final boolean failOnCertError) {
     this.failOnCertError = failOnCertError;
-  }
-
-  String getUser() {
-    return user;
   }
 
   /**
@@ -66,8 +56,7 @@ abstract class CertHttpsHandler implements HttpsHandler {
    * handful of GeneralSecurityException subclasses that can be thrown in loading an X.509
    * Certificate and we handle all of them identically.
    */
-  protected abstract CertKey createCertKey()
-      throws IOException, GeneralSecurityException;
+  protected abstract CertKey createCertKey() throws IOException, GeneralSecurityException;
 
   /**
    * Return a String describing the source of the cert for use in error messages logged by
