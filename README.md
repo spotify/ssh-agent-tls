@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/spotify/ssh-agent-tls.svg)](LICENSE)
 
 This Java library provides tools for client-side TLS operations.
-This project is currently in alpha phase.
+This project is currently stable and used in [Helios](https://github.com/spotify/helios).
 
 * [Download](#download)
 * [Getting started](#getting-started)
