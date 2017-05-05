@@ -74,7 +74,7 @@ public abstract class CertKey {
     } else if (parsedPem instanceof PrivateKeyInfo) {
       keyInfo = (PrivateKeyInfo) parsedPem;
     } else {
-      throw new UnsupportedOperationException("Unable to parse X.509 certificate.");
+      throw new UnsupportedOperationException("Unable to parse X.509 certificate, received " + parsedPem.getClass());
     }
 
     final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyInfo.getEncoded());
