@@ -88,14 +88,12 @@ abstract class CertHttpsHandler implements HttpsHandler {
     // Generate a keystore password.
     // Do all this locally to not make copies of the password in memory.
     final SecureRandom random = new SecureRandom();
-    final byte[] bytes = new byte[60];
-    final char[] keyStorePassword = new char[60];
-    random.nextBytes(bytes);
-    for (int i = 0; i < bytes.length; i++) {
-      keyStorePassword[i] = (char) (bytes[i] & 0xff);
+    final int numBytes = 60;
+    final char[] keyStorePassword = new char[numBytes];
+    for (int i = 0; i < numBytes; i++) {
+      // Only use ASCII characters for the password. The corresponding integer range is [32, 126].
+      keyStorePassword[i] = (char) (random.nextInt(95) + 32);
     }
-    // Clear out the array that had password. Do it immediately! Rohan said so.
-    Arrays.fill(bytes, (byte) 0);
 
     try {
       // We're creating a keystore in memory and putting the cert & key into it.
