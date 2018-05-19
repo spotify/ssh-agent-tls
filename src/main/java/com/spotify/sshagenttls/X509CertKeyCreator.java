@@ -22,7 +22,6 @@ package com.spotify.sshagenttls;
 
 import static java.util.concurrent.TimeUnit.HOURS;
 
-import com.eaio.uuid.UUID;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.BaseEncoding;
 
@@ -97,8 +96,8 @@ public class X509CertKeyCreator implements CertKeyCreator {
 
   @Override
   public CertKey createCertKey(final String username, final X500Principal x500Principal) {
-    final UUID uuid = new UUID();
     final Calendar calendar = Calendar.getInstance();
+    final BigInteger serialNumber = BigInteger.valueOf(calendar.getTimeInMillis()).abs();
     final X500Name issuerDn = new X500Name(x500Principal.getName(X500Principal.RFC1779));
     final X500Name subjectDn = new X500NameBuilder().addRDN(BCStyle.UID, username).build();
 
@@ -107,9 +106,6 @@ public class X509CertKeyCreator implements CertKeyCreator {
 
     calendar.add(Calendar.MILLISECOND, validBeforeMillis + validAfterMillis);
     final Date notAfter = calendar.getTime();
-
-    // Reuse the UUID time as a SN
-    final BigInteger serialNumber = BigInteger.valueOf(uuid.getTime()).abs();
 
     try {
       final KeyPair keyPair = generateRandomKeyPair();
