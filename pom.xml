@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>ssh-agent-tls</artifactId>
-  <version>0.0.4-SNAPSHOT</version>
+  <version>0.0.4</version>
   <name>ssh-agent-tls</name>
   <description>
     A library that generates X.509 certificates and signs them with SSH agent.
@@ -28,7 +28,7 @@
     <connection>scm:git:https://github.com/spotify/ssh-agent-tls</connection>
     <developerConnection>scm:git:git@github.com:spotify/ssh-agent-tls</developerConnection>
     <url>https://github.com/spotify/ssh-agent-tls</url>
-    <tag>HEAD</tag>
+    <tag>v0.0.4</tag>
   </scm>
 
   <developers>
