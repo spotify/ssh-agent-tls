@@ -88,7 +88,7 @@
     <dependency>
       <groupId>com.spotify</groupId>
       <artifactId>ssh-agent-proxy</artifactId>
-      <version>0.1.5</version>
+      <version>0.2.1</version>
     </dependency>
     <dependency>
       <groupId>com.eaio.uuid</groupId>
